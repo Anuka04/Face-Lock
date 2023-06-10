@@ -8,9 +8,7 @@ class Transaction extends Component {
     this.state = {
       username: "",
       account: "",
-      password: "",
-      // email: "",
-      // otp: "",
+      // password: "",
       reciever_name: "",
       recieveraccount_number: "",
       amount: "",
@@ -40,16 +38,14 @@ class Transaction extends Component {
     const txn = {
       username: this.state.username,
       account: this.state.account,
-      password: this.state.password,
-      // email: this.state.email,
-      // otp: this.state.otp,
+      // password: this.state.password,
       reciever_name: this.state.reciever_name,
       recieveraccount_number: this.state.recieveraccount_number,
       amount: this.state.amount,
     };
 
     transaction(txn).then((res) => {
-      this.props.history.push(`/profile`);
+      this.props.history.push(`/verify`);
     });
   }
 
@@ -84,7 +80,7 @@ class Transaction extends Component {
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <input
                   type="password"
@@ -94,29 +90,7 @@ class Transaction extends Component {
                   value={this.state.password}
                   onChange={this.onChange}
                 />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  placeholder="Enter Email"
-                  // value={this.state.email}
-                  // onChange={this.onChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="OTP">OTP</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="otp"
-                  placeholder="Enter OTP"
-                  // value={this.state.otp}
-                  // onChange={this.onChange}
-                />
-              </div>
+              </div> */}
               <div className="form-group">
                 <label htmlFor="receiver">Receiver</label>
                 <input
@@ -150,15 +124,11 @@ class Transaction extends Component {
                   onChange={this.onChange}
                 />
               </div>
-
-              <button className="btn btn-lg btn-primary btn-block">
-                Generate OTP
-              </button>
               <button
                 type="submit"
                 className="btn btn-lg btn-primary btn-block"
               >
-                Make Transaction
+                Proceed to authentication
               </button>
             </form>
           </div>

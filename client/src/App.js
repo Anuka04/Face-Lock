@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Transaction from "./components/Transaction";
+import OTPVerify from "./components/OTPVerify";
 
 import Liveness from "./components/Liveness";
 
@@ -22,6 +23,7 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/transaction" component={Transaction} />
+            <Route exact path="/verify" component={OTPVerify} />
             <Route exact path="/liveness" component={Liveness} />
           </div>
         </div>
