@@ -2,7 +2,7 @@
 import matplotlib
 matplotlib.use("Agg")
 # import the necessary packages
-from pyimagesearch.livenessnet import LivenessNet
+from pyimagesearch.enhanced import EnhancedLivenessNet
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -71,7 +71,7 @@ aug = ImageDataGenerator(rotation_range=20, zoom_range=0.15,
 # initialize the optimizer and model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model = LivenessNet.build(width=32, height=32, depth=3,
+model = EnhancedLivenessNet.build(width=32, height=32, depth=3,
 	classes=len(le.classes_))
 model.compile(loss="binary_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
