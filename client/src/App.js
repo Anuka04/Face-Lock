@@ -10,6 +10,7 @@ import Transaction from "./components/Transaction";
 import OTPVerify from "./components/OTPVerify";
 
 import Liveness from "./components/Liveness";
+import FaceRec from "./components/FaceRec";
 
 class App extends Component {
   render() {
@@ -25,6 +26,7 @@ class App extends Component {
             <Route exact path="/transaction" component={Transaction} />
             <Route exact path="/verify" component={OTPVerify} />
             <Route exact path="/liveness" component={Liveness} />
+            <Route exact path="/facerec" component={FaceRec} />
           </div>
         </div>
       </Router>

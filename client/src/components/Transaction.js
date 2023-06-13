@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { transaction } from "./TransactionFunctions";
+import { getUserDetails } from "./TransactionFunctions";
 import jwt_decode from "jwt-decode";
 
 class Transaction extends Component {
@@ -8,7 +9,6 @@ class Transaction extends Component {
     this.state = {
       username: "",
       account: "",
-      // password: "",
       reciever_name: "",
       recieveraccount_number: "",
       amount: "",
@@ -19,10 +19,14 @@ class Transaction extends Component {
   }
 
   componentDidMount() {
-    const token = localStorage.getItem("jwtToken");
+    const token = localStorage.usertoken;
     if (token) {
       const decoded = jwt_decode(token);
-      this.setState({ username: decoded.username });
+      console.log(decoded);
+      this.setState({
+        username: decoded.sub.username,
+        account: decoded.sub.account,
+      });
     } else {
       this.props.history.push("/transaction");
     }
@@ -38,7 +42,6 @@ class Transaction extends Component {
     const txn = {
       username: this.state.username,
       account: this.state.account,
-      // password: this.state.password,
       reciever_name: this.state.reciever_name,
       recieveraccount_number: this.state.recieveraccount_number,
       amount: this.state.amount,
@@ -72,25 +75,15 @@ class Transaction extends Component {
               <div className="form-group">
                 <label htmlFor="account">Account Number</label>
                 <input
-                  type="account"
+                  type="text"
                   className="form-control"
                   name="account"
                   placeholder="Enter Account Number"
-                  value={this.state.account}
+                  // value={this.state.account}
+                  defaultValue={this.state.account}
                   onChange={this.onChange}
                 />
               </div>
-              {/* <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  placeholder="Enter Password"
-                  value={this.state.password}
-                  onChange={this.onChange}
-                />
-              </div> */}
               <div className="form-group">
                 <label htmlFor="receiver">Receiver</label>
                 <input
