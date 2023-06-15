@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { transaction } from "./TransactionFunctions";
-import { getUserDetails } from "./TransactionFunctions";
 import jwt_decode from "jwt-decode";
 
 class Transaction extends Component {

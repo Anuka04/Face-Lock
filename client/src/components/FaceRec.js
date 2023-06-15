@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 class FaceRec extends Component {
   constructor(props) {
@@ -27,6 +28,29 @@ class FaceRec extends Component {
         console.error("Error accessing webcam:", error);
       });
   }
+
+  sendFramesToBackend = async () => {
+    try {
+      const token = localStorage.usertoken;
+      const decoded = jwt_decode(token);
+      // console.log(decoded);
+      const username = decoded.sub.username;
+      const response = await axios.post("http://localhost:5001/facerec_data", {
+        frames: this.state.frames,
+        username: username,
+      });
+      this.setState({
+        username: username,
+      });
+      // Handle the response from the Flask backend
+      console.log(response.data); // Log the response data
+      const { prediction } = response.data;
+      this.setState({ prediction });
+    } catch (error) {
+      console.error(error);
+      // Handle errors
+    }
+  };
 
   startCapture = () => {
     this.setState({ frames: [], capturing: true });
@@ -57,21 +81,7 @@ class FaceRec extends Component {
     // Send captured frames to the Flask backend for face recognition
     this.sendFramesToBackend();
   };
-  sendFramesToBackend = async () => {
-    try {
-      const response = await axios.post("http://localhost:5001/facerec_data", {
-        frames: this.state.frames,
-      });
 
-      // Handle the response from the Flask backend
-      console.log(response.data); // Log the response data
-      const { prediction } = response.data;
-      this.setState({ prediction });
-    } catch (error) {
-      console.error(error);
-      // Handle errors
-    }
-  };
   render() {
     const { capturing, prediction } = this.state;
 

@@ -9,6 +9,14 @@ from dotenv import load_dotenv
 from flask_mail import Mail, Message
 import pyotp
 import os
+import base64
+
+from flask_cors import cross_origin
+import cv2
+import face_recognition
+from PIL import Image
+import numpy as np
+import io
 
 load_dotenv()
 
@@ -21,7 +29,7 @@ mailpswd = os.getenv("MAILPSWD")
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = 'projecttrial30@gmail.com'
-app.config['MAIL_PASSWORD'] = mailpswd ###########################CHECK IF THIS WORKED  
+app.config['MAIL_PASSWORD'] = 'jihfydnmtvttitlj'  
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -42,46 +50,100 @@ jwt = JWTManager(app)
 CORS(app)
 
 from cryptography.fernet import Fernet
-import base64
-
-# Generate or retrieve the encryption key
-encryption_key = b'MySecretEncryptionKe'  # Replace with your own key or retrieve it from a secure source
-
-from cryptography.fernet import Fernet
-import base64
-import os
-import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-# Generate a random salt
-salt = os.urandom(16)
-
-# Derive a key from the salt using PBKDF2HMAC
+encryption_key = b'MyNewSecretEncryptionKey'
+salt = b'MyRandomSalt'
 kdf = PBKDF2HMAC(
     algorithm=hashes.SHA256(),
-    length=32,  # 32 bytes = 256 bits
+    length=32,
     salt=salt,
-    iterations=100000,  # Adjust the number of iterations according to your security requirements
+    iterations=100000,
     backend=default_backend()
 )
 key = base64.urlsafe_b64encode(kdf.derive(encryption_key))
-
-# Initialize the Fernet instance with the encryption key
 f = Fernet(key)
 
+
+# def encrypt_data(data):
+#     encrypted_data = f.encrypt(data.encode())
+#     return base64.urlsafe_b64encode(salt + encrypted_data).decode()
+
+# def decrypt_data(encrypted_data):
+#     encrypted_data = base64.urlsafe_b64decode(encrypted_data.encode())
+#     decrypted_data = f.decrypt(encrypted_data[len(salt):])
+#     return decrypted_data.decode()
+
 def encrypt_data(data):
-    encrypted_data = f.encrypt(data.encode())
-    return base64.urlsafe_b64encode(salt + encrypted_data).decode()
+    return data
+    encrypted_data = f.encrypt(data)
+    return base64.urlsafe_b64encode(encrypted_data).decode()
 
 def decrypt_data(encrypted_data):
-    encrypted_data = base64.urlsafe_b64decode(encrypted_data.encode())
-    decrypted_data = f.decrypt(encrypted_data[len(salt):])
-    return decrypted_data.decode()
+    try:
+        encrypted_data = base64.urlsafe_b64decode(encrypted_data)
+        decrypted_data = f.decrypt(encrypted_data)
+        return decrypted_data.decode()
+    except:
+        # Handle the InvalidToken exception here
+        # For example, you can return None or an error message
+        return None
 
+
+
+def base64_to_numpy(base64_string):
+    # Remove the data URL prefix
+    encoded_image = base64_string.split(",")[1]
+
+    # Decode the base64 string to bytes
+    image_bytes = base64.b64decode(encoded_image)
+
+    # Create a BytesIO object to wrap the image bytes
+    image_stream = io.BytesIO(image_bytes)
+
+    # Open the image using PIL (Python Imaging Library)
+    pil_image = Image.open(image_stream)
+
+    # Convert PIL image to NumPy array
+    numpy_array = np.array(pil_image)
+
+    return numpy_array
+
+@app.route('/extract-faces', methods=["POST"])
+@cross_origin()
+def send_encooding():
+    faces = db.faces
+
+    # Get the frames from the request
+    # frames = request.form.getlist('frames')
+    frame = request.get_json()['frame']
+    print("FRAMES ARE ",frame)
+
+    image = base64_to_numpy(frame)
+    rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Detect faces in the frame
+    face_locations = face_recognition.face_locations(rgb_frame)
+    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+
+    # Initialize arrays to store encodings and locations
+    encodings = []
+    locations = []
+        # Iterate over detected faces
+    for face_encoding, face_location in zip(face_encodings, face_locations):
+                # Append encoding and location to arrays
+        encodings.append(face_encoding.tolist())
+        locations.append(face_location)
+    response_data = {
+        'encodings': encodings,
+        'locations': locations
+    }
+    return jsonify(response_data)
 
 @app.route('/users/register', methods=["POST"])
+@cross_origin()
 def register():
     users = db.users
     username = request.get_json()['username']
@@ -91,6 +153,8 @@ def register():
     facialRecognitionEnabled = request.get_json()['facialRecognitionEnabled']
     threshold = request.get_json()['threshold']
     created = datetime.utcnow()
+    encodings = request.get_json()['encodings']
+    locations = request.get_json()['locations']
 
     user_id = users.insert_one({
         'username': username,
@@ -99,7 +163,9 @@ def register():
         'password': password,
         'facialRecognitionEnabled': facialRecognitionEnabled,
         'threshold': threshold,
-        'created': created
+        'created': created,
+        'encodings': encodings,
+        'locations': locations,
     }).inserted_id
 
     new_user = users.find_one({'_id': ObjectId(user_id)})
@@ -117,7 +183,8 @@ def login():
 
     response = users.find_one({'username': username})
     if response:
-        acnt = decrypt_data(response['account'])  
+        # acnt = decrypt_data(response['account'])  
+        acnt = 1234
         if bcrypt.check_password_hash(response['password'], password):
             access_token = create_access_token(identity={
                 'username': response['username'],
@@ -171,13 +238,16 @@ def transaction():
 @app.route('/verify', methods=['POST'])
 def validate():
     user_otp = request.get_json()['otp']
-    totp = pyotp.TOTP(otp_secret,interval=30)
-    print(totp)
-    if totp.verify(user_otp):
-        print(user_otp)
+    totp = pyotp.TOTP(otp_secret, interval=30)
+    generated_otp = totp.now()  # OTP generated during the transaction process
+    print("Generated OTP:", generated_otp)
+    print("User OTP:", user_otp)
+    
+    if totp.verify(user_otp, valid_window=1):  # Specify a valid window of 1 to allow for minor time variations
         return jsonify({'message': 'OTP is correct'})
     else:
         return jsonify({'message': 'OTP is incorrect'})
+
 
 if __name__ == '__main__':
     app.run(debug=True,port=5000)

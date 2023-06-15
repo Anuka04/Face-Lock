@@ -2,13 +2,15 @@ import axios from "axios";
 
 export const register = (newUser) => {
   return axios
-    .post("users/register", {
+    .post("http://localhost:5000/users/register", {
       username: newUser.username,
       email: newUser.email,
       account: newUser.account,
       password: newUser.password,
       facialRecognitionEnabled: newUser.facialRecognitionEnabled,
       threshold: newUser.threshold,
+      encodings: newUser.encodings,
+      locations: newUser.locations,
     })
     .then((response) => {
       console.log("Registered");
