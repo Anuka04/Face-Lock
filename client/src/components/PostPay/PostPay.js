@@ -37,6 +37,11 @@ class PostPay extends Component {
           <p>Receiver Name: {transaction.reciever_name}</p>
           <p>Receiver Account Number: {transaction.recieveraccount_number}</p>
           <p>Amount: {transaction.amount}</p>
+          <br />
+          <br />
+          <a href="/profile" rel="noopener noreferrer">
+            <button>Back to Profile</button>
+          </a>
         </div>
       </div>
     );

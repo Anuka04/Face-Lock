@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { Redirect } from "react-router-dom";
 
 class FaceRec extends Component {
   constructor(props) {
@@ -9,11 +8,12 @@ class FaceRec extends Component {
     this.state = {
       capturing: false,
       frames: [],
-      prediction: "",
-      redirect: false,
+      result: "",
     };
     this.videoRef = React.createRef();
     this.captureInterval = null;
+    this.startCapture = this.startCapture.bind(this);
+    this.stopCapture = this.stopCapture.bind(this);
   }
 
   componentDidMount() {
@@ -35,7 +35,6 @@ class FaceRec extends Component {
     try {
       const token = localStorage.usertoken;
       const decoded = jwt_decode(token);
-      // console.log(decoded);
       const username = decoded.sub.username;
       const response = await axios.post("http://localhost:5001/facerec_data", {
         frames: this.state.frames,
@@ -46,18 +45,14 @@ class FaceRec extends Component {
       });
       // Handle the response from the Flask backend
       console.log(response.data); // Log the response data
-      const { prediction } = response.data;
-      this.setState({ prediction });
-      if (prediction.result === "Match found!") {
-        const video = this.videoRef.current;
-        if (video) {
-          const stream = video.srcObject;
-          const tracks = stream.getTracks();
-          tracks.forEach((track) => track.stop());
-          video.srcObject = null;
-        }
-        this.setState({ redirect: true });
-      }
+      const { prediction, predictionliveness, probability } = response.data;
+      this.setState({
+        result: prediction.result,
+        predictionliveness: predictionliveness,
+        probability: probability,
+        matches: prediction.matches,
+        non_matches: prediction.non_matches,
+      });
     } catch (error) {
       console.error(error);
       // Handle errors
@@ -95,10 +90,20 @@ class FaceRec extends Component {
   };
 
   render() {
-    const { capturing, prediction } = this.state;
-    if (this.state.redirect) {
-      return <Redirect to="/success" />;
-    }
+    const {
+      capturing,
+      result,
+      predictionliveness,
+      probability,
+      matches,
+      non_matches,
+    } = this.state;
+
+    const accuracy =
+      matches !== undefined && non_matches !== undefined
+        ? (matches / (matches + non_matches)) * 100
+        : 0;
+
     return (
       <div>
         <h1>Face Recognition</h1>
@@ -110,10 +115,27 @@ class FaceRec extends Component {
         ) : (
           <button onClick={this.stopCapture}>Stop Capture</button>
         )}
-        {prediction && (
+        {result && (
           <div>
             <h2>Result</h2>
-            <p>{prediction.result}</p>
+            <p>{result}</p>
+          </div>
+        )}
+        {matches !== undefined && non_matches !== undefined && (
+          <div>
+            <p>Confidence: {accuracy}%</p>
+          </div>
+        )}
+        {predictionliveness && (
+          <div>
+            <h2>Liveness</h2>
+            <p>{predictionliveness}</p>
+            <p>Probability: {probability}%</p>
+            <br />
+
+            <a href="/success" rel="noopener noreferrer">
+              <button>Go to next page</button>
+            </a>
           </div>
         )}
       </div>

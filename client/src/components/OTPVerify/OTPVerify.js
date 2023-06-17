@@ -97,7 +97,6 @@ class OTPVerify extends Component {
             Submit
           </button>
         </form>
-        {this.state.message && <p>{this.state.message}</p>}
         <br />
         <br />
         <br />

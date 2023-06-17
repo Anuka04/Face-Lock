@@ -194,11 +194,7 @@ def transaction():
     except Exception as e:
         print(e)
         print('result: Error occurred while sending OTP')
-    # try:
-    #     if float(amount) > float(response['threshold']):
-    #         return jsonify({'facever': 'Amount exceeds threshold. Face recognition required.'})
-    # except ValueError:
-    #     return jsonify({'error': 'Invalid threshold value. Please check the configuration.'})
+
     txn_id = txn.insert_one({
         'username': username,
         'account': account,
@@ -208,6 +204,12 @@ def transaction():
     }).inserted_id
 
     new_txn = txn.find_one({'_id': ObjectId(txn_id)})
+
+    try:
+        if float(amount) > float(response['threshold']):
+            return jsonify({'facever': 'Amount exceeds threshold. Face recognition required.'})
+    except ValueError:
+        return jsonify({'error': 'Invalid threshold value. Please check the configuration.'})
     
     result = {'username': new_txn['username'] + ' new transaction'}
     return jsonify({'result': result})

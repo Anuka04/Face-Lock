@@ -139,6 +139,10 @@ class Transaction extends Component {
               >
                 Proceed to authentication
               </button>
+              <p>
+                You will recive an OTP on your registered email for
+                authentication
+              </p>
             </form>
           </div>
         </div>

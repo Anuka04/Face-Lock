@@ -111,14 +111,6 @@ def compare_faces(frames, username):
                 else:
                     non_matches += 1
     print(matches)
-    # if matches > non_matches:
-    #     print("MATCH!!!!!!!!!!!")
-    #     # response = {'result': 'Match found!', 'matches':float(matches), 'non-matches':float(non_matches)}
-    #     response = {'result': 'Match found!'}
-    # else:
-    #     print("NO MATCH D:")
-    #     # response = {'result': 'No match found!', 'matches':float(matches), 'non-matches':float(non_matches)}
-    #     response = {'result': 'No match found!'}
     response = {
         'result': 'Match found!' if matches > non_matches else 'No match found!',
         'matches': matches,
