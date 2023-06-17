@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { register } from "./UserFunctions";
+import { register } from "../UserFunctions";
 import axios from "axios";
 
 class Register extends Component {
@@ -36,6 +36,18 @@ class Register extends Component {
 
   startCapture = (e) => {
     e.preventDefault();
+    const video = this.videoRef.current;
+    if (video && !video.srcObject) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch((error) => {
+          console.error("Error accessing webcam:", error);
+        });
+    }
 
     this.setState({ frame: null, capturing: true });
 
@@ -114,17 +126,24 @@ class Register extends Component {
     register(newUser).then((res) => {
       this.props.history.push(`/login`);
     });
+
+    const video = this.videoRef.current;
+    if (video) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      video.srcObject = null;
+    }
   }
 
   render() {
-    const { capturing } = this.state;
+    const { capturing, facialRecognitionEnabled } = this.state;
     return (
       <div className="container">
         <div className="row">
           <div className="col-md-6 mt-5 mx-auto">
             <form noValidate onSubmit={this.onSubmit}>
               <h1 className="h3 mb-3 font-weight-normal">Register</h1>
-              <video ref={this.videoRef} autoPlay muted />
 
               <div className="form-group">
                 <label htmlFor="username">Username</label>
@@ -137,6 +156,7 @@ class Register extends Component {
                   onChange={this.onChange}
                 />
               </div>
+
               <div className="form-group">
                 <label htmlFor="email">Email Address</label>
                 <input
@@ -148,6 +168,7 @@ class Register extends Component {
                   onChange={this.onChange}
                 />
               </div>
+
               <div className="form-group">
                 <label htmlFor="account">Account Number</label>
                 <input
@@ -159,6 +180,7 @@ class Register extends Component {
                   onChange={this.onChange}
                 />
               </div>
+
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <input
@@ -170,12 +192,13 @@ class Register extends Component {
                   onChange={this.onChange}
                 />
               </div>
+
               <div className="form-group form-check">
                 <input
                   type="checkbox"
                   className="form-check-input"
                   name="facialRecognitionEnabled"
-                  checked={this.state.facialRecognitionEnabled}
+                  checked={facialRecognitionEnabled}
                   onChange={this.onChange}
                 />
                 <label
@@ -185,28 +208,35 @@ class Register extends Component {
                   Facial Recognition Enabled
                 </label>
               </div>
-              {this.state.facialRecognitionEnabled && (
-                <div className="form-group">
-                  <label htmlFor="threshold">Threshold</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="threshold"
-                    placeholder="Enter Threshold"
-                    value={this.state.threshold}
-                    onChange={this.onChange}
-                  />
-                  <p>
-                    *This threshold is the value below which facial recognition
-                    will not be used
-                  </p>
+
+              {facialRecognitionEnabled && (
+                <div>
+                  <div className="form-group">
+                    <label htmlFor="threshold">Threshold</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      name="threshold"
+                      placeholder="Enter Threshold"
+                      value={this.state.threshold}
+                      onChange={this.onChange}
+                    />
+                    <p>
+                      *This threshold is the value below which facial
+                      recognition will not be used
+                    </p>
+                  </div>
+
                   {!capturing ? (
                     <button onClick={this.startCapture}>Start Capture</button>
                   ) : (
                     <button onClick={this.stopCapture}>Stop Capture</button>
                   )}
+
+                  <video ref={this.videoRef} autoPlay muted />
                 </div>
               )}
+
               <button
                 type="submit"
                 className="btn btn-lg btn-primary btn-block"

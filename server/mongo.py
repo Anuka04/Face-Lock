@@ -49,48 +49,22 @@ jwt = JWTManager(app)
 
 CORS(app)
 
-from cryptography.fernet import Fernet
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from flask_simple_crypt import SimpleCrypt
 
-encryption_key = b'MyNewSecretEncryptionKey'
-salt = b'MyRandomSalt'
-kdf = PBKDF2HMAC(
-    algorithm=hashes.SHA256(),
-    length=32,
-    salt=salt,
-    iterations=100000,
-    backend=default_backend()
-)
-key = base64.urlsafe_b64encode(kdf.derive(encryption_key))
-f = Fernet(key)
+app.config['SECRET_KEY'] = "this is my key"
 
+cipher = SimpleCrypt()
+cipher.init_app(app)
 
-# def encrypt_data(data):
-#     encrypted_data = f.encrypt(data.encode())
-#     return base64.urlsafe_b64encode(salt + encrypted_data).decode()
-
-# def decrypt_data(encrypted_data):
-#     encrypted_data = base64.urlsafe_b64decode(encrypted_data.encode())
-#     decrypted_data = f.decrypt(encrypted_data[len(salt):])
-#     return decrypted_data.decode()
 
 def encrypt_data(data):
-    return data
-    encrypted_data = f.encrypt(data)
-    return base64.urlsafe_b64encode(encrypted_data).decode()
+    encrypted_data = cipher.encrypt(data)
+    # print(encrypted_data)  # returns base64 encoded and encrypted data
+    return encrypted_data
 
 def decrypt_data(encrypted_data):
-    try:
-        encrypted_data = base64.urlsafe_b64decode(encrypted_data)
-        decrypted_data = f.decrypt(encrypted_data)
-        return decrypted_data.decode()
-    except:
-        # Handle the InvalidToken exception here
-        # For example, you can return None or an error message
-        return None
-
+    decrypted_data = cipher.decrypt(encrypted_data)
+    return decrypted_data.decode('utf-8')
 
 
 def base64_to_numpy(base64_string):
@@ -114,12 +88,13 @@ def base64_to_numpy(base64_string):
 @app.route('/extract-faces', methods=["POST"])
 @cross_origin()
 def send_encooding():
-    faces = db.faces
 
     # Get the frames from the request
     # frames = request.form.getlist('frames')
     frame = request.get_json()['frame']
-    print("FRAMES ARE ",frame)
+
+    # frame = request.json['frame']
+    # print("FRAMES ARE ",frame)
 
     image = base64_to_numpy(frame)
     rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -183,8 +158,7 @@ def login():
 
     response = users.find_one({'username': username})
     if response:
-        # acnt = decrypt_data(response['account'])  
-        acnt = 1234
+        acnt = decrypt_data(response['account'])  
         if bcrypt.check_password_hash(response['password'], password):
             access_token = create_access_token(identity={
                 'username': response['username'],
@@ -220,7 +194,11 @@ def transaction():
     except Exception as e:
         print(e)
         print('result: Error occurred while sending OTP')
-
+    # try:
+    #     if float(amount) > float(response['threshold']):
+    #         return jsonify({'facever': 'Amount exceeds threshold. Face recognition required.'})
+    # except ValueError:
+    #     return jsonify({'error': 'Invalid threshold value. Please check the configuration.'})
     txn_id = txn.insert_one({
         'username': username,
         'account': account,
@@ -230,7 +208,7 @@ def transaction():
     }).inserted_id
 
     new_txn = txn.find_one({'_id': ObjectId(txn_id)})
-
+    
     result = {'username': new_txn['username'] + ' new transaction'}
     return jsonify({'result': result})
 
@@ -247,6 +225,22 @@ def validate():
         return jsonify({'message': 'OTP is correct'})
     else:
         return jsonify({'message': 'OTP is incorrect'})
+
+
+@app.route('/success-data', methods=['GET'])
+def success():
+    txn = db.txn
+    transaction = txn.find().sort('_id', -1).limit(1)  # Retrieve the latest transaction from the database
+    # if transaction.count() == 0:
+    #     return jsonify({'error': 'No transactions found'})
+    transaction = transaction[0]  # Get the first (and only) transaction from the result
+    transaction['_id'] = str(transaction['_id'])
+    # Decrypt the encrypted fields
+    transaction['account'] = decrypt_data(transaction['account'])
+    transaction['reciever_name'] = decrypt_data(transaction['reciever_name'])
+    transaction['recieveraccount_number'] = decrypt_data(transaction['recieveraccount_number'])
+
+    return jsonify(transaction)
 
 
 if __name__ == '__main__':

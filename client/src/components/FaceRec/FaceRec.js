@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import { Redirect } from "react-router-dom";
 
 class FaceRec extends Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class FaceRec extends Component {
       capturing: false,
       frames: [],
       prediction: "",
+      redirect: false,
     };
     this.videoRef = React.createRef();
     this.captureInterval = null;
@@ -46,6 +48,16 @@ class FaceRec extends Component {
       console.log(response.data); // Log the response data
       const { prediction } = response.data;
       this.setState({ prediction });
+      if (prediction.result === "Match found!") {
+        const video = this.videoRef.current;
+        if (video) {
+          const stream = video.srcObject;
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => track.stop());
+          video.srcObject = null;
+        }
+        this.setState({ redirect: true });
+      }
     } catch (error) {
       console.error(error);
       // Handle errors
@@ -84,7 +96,9 @@ class FaceRec extends Component {
 
   render() {
     const { capturing, prediction } = this.state;
-
+    if (this.state.redirect) {
+      return <Redirect to="/success" />;
+    }
     return (
       <div>
         <h1>Face Recognition</h1>

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 class OTPVerify extends Component {
   constructor(props) {
@@ -7,7 +8,17 @@ class OTPVerify extends Component {
     this.state = {
       otp: "",
       message: "",
+      redirectToFaceRec: false,
+      redirectToSuccess: false,
+      facever: null,
     };
+  }
+
+  componentDidMount() {
+    const { state } = this.props.location;
+    if (state && state.facever) {
+      this.setState({ facever: state.facever });
+    }
   }
 
   handleSubmit = (e) => {
@@ -21,6 +32,16 @@ class OTPVerify extends Component {
       .then((response) => {
         // Handle the server response and show pop-up messages
         this.setState({ message: response.data.message });
+        if (
+          response.data.message === "OTP is correct" &&
+          this.state.facever !== null
+        ) {
+          // OTP is correct and facever has a value, redirect to /facerec
+          this.setState({ redirectToFaceRec: true });
+        } else if (response.data.message === "OTP is correct") {
+          // No facever value, redirect to /success
+          this.setState({ redirectToSuccess: true });
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -32,6 +53,13 @@ class OTPVerify extends Component {
   };
 
   render() {
+    if (this.state.redirectToFaceRec) {
+      return <Redirect to="/facerec" />;
+    }
+    if (this.state.redirectToSuccess) {
+      return <Redirect to="/success" />;
+    }
+    const { facever } = this.state;
     return (
       <div>
         <br />
@@ -70,6 +98,16 @@ class OTPVerify extends Component {
           </button>
         </form>
         {this.state.message && <p>{this.state.message}</p>}
+        <br />
+        <br />
+        <br />
+        {this.state.message && <p>{this.state.message}</p>}
+        {facever && (
+          <p>
+            You will need to perform facial recognition next as amount of
+            transaction is greater than your threshold.
+          </p>
+        )}
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { transaction } from "./TransactionFunctions";
+import axios from "axios";
 import jwt_decode from "jwt-decode";
 
 class Transaction extends Component {
@@ -11,6 +11,7 @@ class Transaction extends Component {
       reciever_name: "",
       recieveraccount_number: "",
       amount: "",
+      faceRec: false,
     };
 
     this.onChange = this.onChange.bind(this);
@@ -46,9 +47,26 @@ class Transaction extends Component {
       amount: this.state.amount,
     };
 
-    transaction(txn).then((res) => {
-      this.props.history.push(`/verify`);
-    });
+    axios
+      .post("txn/transaction", txn)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.facever) {
+          // Handle face recognition verification
+          console.log(response.data.facever);
+          this.props.history.push({
+            pathname: "/verify",
+            state: { facever: response.data.facever },
+          });
+          // Redirect to face verification page or show appropriate message
+        } else {
+          console.log("New transaction");
+          this.props.history.push(`/verify`);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -78,7 +96,6 @@ class Transaction extends Component {
                   className="form-control"
                   name="account"
                   placeholder="Enter Account Number"
-                  // value={this.state.account}
                   defaultValue={this.state.account}
                   onChange={this.onChange}
                 />
