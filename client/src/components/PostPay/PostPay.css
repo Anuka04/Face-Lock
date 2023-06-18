@@ -1,0 +1,77 @@
+.container-pay{
+    width: 750px;
+    height: 625px;
+    margin: auto;
+    margin-top:100px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.success-img{
+    background-image: url("./tick.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: 180px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    padding:auto;
+
+}
+.h1-pay{
+    font-family: BentonSans,Helvetica Neue,Roboto,Helvetica,sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 45px;
+    line-height: 20px;
+    margin-top: 90px;
+    padding:auto;
+}
+.h2-pay{
+    font-family: BentonSans,Helvetica Neue,Roboto,Helvetica,sans-serif;
+    font-style: normal;
+    font-weight: 200;
+    font-size: 25px;
+    line-height: 72px;
+    color: #53565a;
+    padding: auto;
+    text-align: center;
+    margin-top: 10px;
+}
+.table-pay{
+    margin-left:-30px ;
+    font-size: 20px;
+}
+.table-pay td{
+    padding:10px;
+}
+.two{
+    text-align: right;
+}
+
+.btn-pay{
+    margin: auto;
+    width: 400px;
+  padding: 10px 20px;
+  font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 32px;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #0072ce;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-pay:hover {
+    background-color: #00509d;
+  }

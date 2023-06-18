@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import "./PostPay.css";
 
 class PostPay extends Component {
   constructor(props) {
@@ -28,19 +29,30 @@ class PostPay extends Component {
     const { transaction } = this.state;
 
     return (
-      <div>
-        <h1>PAYMENT SUCCESS YEAH</h1>
-        <div>
-          <h2>Transaction Details</h2>
-          <p>Username: {transaction.username}</p>
-          <p>Account: {transaction.account}</p>
-          <p>Receiver Name: {transaction.reciever_name}</p>
-          <p>Receiver Account Number: {transaction.recieveraccount_number}</p>
-          <p>Amount: {transaction.amount}</p>
+      <div className="container-pay">
+        <div className="success-img">
+        </div>
+        <h1 className="h1-pay">Payment Successful</h1>
+        <div className="lower">
+          <h2 className="h2-pay">Transaction Details</h2>
+          <table className="table-pay">
+          <tr><td>Username:</td> 
+          {/* <td>{transaction.username}</td> */}
+          <td className="two">Anushree</td>
+          </tr>
+          <tr><td>Account:</td> 
+          <td className="two">{transaction.account}</td></tr>
+          <tr><td>Receiver Name:</td>
+           <td className="two">{transaction.reciever_name}</td></tr>
+          <tr><td>Receiver Account Number:</td> 
+          <td className="two">{transaction.recieveraccount_number}</td></tr>
+          <tr><td>Amount:</td>
+           <td className="two">{transaction.amount}</td></tr>
+          </table>
           <br />
           <br />
           <a href="/profile" rel="noopener noreferrer">
-            <button>Back to Profile</button>
+            <button className="btn-pay">Back to Profile</button>
           </a>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { login } from "../UserFunctions";
-
+import "./Login.css";
 class Login extends Component {
   constructor() {
     super();
@@ -34,27 +34,28 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="container">
+      <body>
+      <div className="container-login">
         <div className="row">
           <div className="col-md-6 mt-5 mx-auto">
             <form noValidate onSubmit={this.onSubmit}>
-              <h1 className="h3 mb-3 font-weight-normal">Please Login</h1>
-              <div className="form-group">
+              <h1 className="h3-login ">Login</h1>
+              <div className="form-group1">
                 <label htmlFor="username">Username</label>
                 <input
                   type="username"
-                  className="form-control"
+                  className="form-control-login"
                   name="username"
                   placeholder="Enter Username"
                   value={this.state.username}
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
+              <div className="form-group2">
                 <label htmlFor="password">Password </label>
                 <input
                   type="password"
-                  className="form-control"
+                  className="form-control-login"
                   name="password"
                   placeholder="Enter Password"
                   value={this.state.password}
@@ -64,14 +65,15 @@ class Login extends Component {
 
               <button
                 type="submit"
-                className="btn btn-lg btn-primary btn-block"
+                className="btn-login btn-lg btn-primary btn-block"
               >
-                Login
+                Log In
               </button>
             </form>
           </div>
         </div>
       </div>
+      </body>
     );
   }
 }

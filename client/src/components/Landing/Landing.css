@@ -1,0 +1,96 @@
+
+  .jumbotron {
+    position: absolute;
+    width: 1255px;
+    height: 727px;
+    left: calc(50% - 1255px/2 + 0.5px);
+    top: calc(50% - 780px/2 - 0.5px);
+    background: #FFFFFF;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.4);;
+    color: #000000;
+  }
+  
+  .text-center2 {
+    position: absolute;
+    top:20px;
+    width: 525px;
+    height: 72px;
+    left: -100px;
+
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 55px;
+    line-height: 72px;
+    color: #000000;
+
+  }
+  .second{
+    position: absolute;
+    width: 377px;
+    height: 52px;
+    left: calc(50% - 525px/2 - 317.5px + 60px) ;
+    top: 110px;
+    
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 29px;
+    text-align: center;
+    
+    color: #006FCF;
+    
+  }
+  .third{
+    position: absolute;
+    width: 452px;
+    height: 225px;
+    left: calc(50% - 525px/2 - 317.5px + 60px);
+    top: 190px;
+
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+
+    color: #006FCF;
+  }
+  .btn-land {
+    display: inline-block;
+    padding: 15px 25px;
+    margin-top: 450px;
+    margin-left:25px;
+    font-family: 'IBM Plex Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 32px;
+    /* identical to box height */
+    text-align: center;
+    color: #FFFFFF;
+    background-color: #0072ce;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn--land {
+    background-color: #0072ce;
+  }
+  
+  .btn-land:hover {
+    background-color: #00509d;
+  }
+ .Image{
+    background-image: url("./image.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    width: 584px;
+    height: 499px;
+    left: 350px;
+    top: 55px;
+
+ }

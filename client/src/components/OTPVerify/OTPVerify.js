@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import "./OTPVerify.css";
 
 class OTPVerify extends Component {
   constructor(props) {
@@ -61,38 +62,27 @@ class OTPVerify extends Component {
     }
     const { facever } = this.state;
     return (
-      <div>
+      <div className="container-otp">
         <br />
-        <h3>Enter your OTP for verification</h3>
+        <h3 className="h3-otp">Enter your OTP for verification</h3>
         <br />
         <form onSubmit={this.handleSubmit}>
           <label>
             Enter OTP:
+            </label>
             <br />
             <input
               type="text"
               name="otp"
+              className="in-otp"
               value={this.state.otp}
               onChange={this.handleChange}
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                marginRight: "10px",
-                width: "200px",
-              }}
             />
-          </label>
+          
+          <br></br>
           <button
             type="submit"
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "blue",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className="btn-otp"
           >
             Submit
           </button>

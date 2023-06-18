@@ -1,27 +1,36 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import "./Landing.css";
 
 class Landing extends Component {
   render() {
     return (
-      <div className="container">
+      <body>
+      <div className="container_land">
         <div className="jumbotron mt-5">
           <div className="col-sm-8 mx-auto">
-            <h1 className="text-center">WELCOME</h1>
-            <p className="text-center">
-              Secure and User-friendly Authentication for Digital Transactions
+            <h1 className="text-center2">Welcome User!!</h1>
+            <h2 className="second">To the future of secure banking with facial recognition!</h2>
+            <h3 className="third">
+              Our revolutionary system combines advanced facial recognition technology with OTP authentication to provide you with 
+              a safe and efficient banking experience.With our system, you can rest assured that your transactions 
+              are processed securely and your privacy is protected. Say goodbye to the hassle of traditional banking 
+              and join us on the cutting edge of banking technology.
+            </h3>
+            <p className="Image">
             </p>
-            <div className="text-center">
-              <Link to="/register" className="btn btn-primary mr-3">
+            <div className="text-center2">
+              <Link to="/register" className="btn-land btn-primary mr-3 register">
                 Register
               </Link>
-              <Link to="/login" className="btn btn-primary mr-3">
+              <Link to="/login" className="btn-land btn-primary mr-3 login">
                 Login
               </Link>
             </div>
           </div>
         </div>
       </div>
+      </body>
     );
   }
 }
