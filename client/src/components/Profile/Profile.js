@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
-
+import "./Profile.css";
 class Profile extends Component {
   constructor() {
     super();
@@ -43,24 +43,25 @@ class Profile extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="container-prof">
         <div className="jumbotron mt-5">
           <div className="col-sm-8 mx-auto">
-            <h1 className="text-center">PROFILE</h1>
+            <h1 className="text-center-prof">PROFILE</h1>
           </div>
-          <table className="table col-md-6 mx-auto">
+          <div className="img-prof"></div>
+          <table className="table-prof col-md-6 mx-auto">
             <tbody>
               <tr>
-                <td>Username</td>
+                <td className="left">Username</td>
                 <td>{this.state.username}</td>
               </tr>
               <tr>
-                <td>Account</td>
+                <td className="left">Account</td>
                 <td>{this.state.account}</td>
               </tr>
               {this.state.threshold > 0 && (
                 <tr>
-                  <td>Threshold</td>
+                  <td className="left">Threshold</td>
                   <td>{this.state.threshold}</td>
                 </tr>
               )}
@@ -69,7 +70,7 @@ class Profile extends Component {
         </div>
         <button
           type="button"
-          className="btn btn-lg btn-primary btn-block"
+          className="btn-prof btn-lg btn-primary btn-block"
           onClick={this.onTransactionClick}
         >
           Make a Transaction

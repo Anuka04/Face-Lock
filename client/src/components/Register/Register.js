@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { register } from "../UserFunctions";
 import axios from "axios";
+import "./Register.css";
 
 class Register extends Component {
   constructor() {
@@ -129,17 +130,17 @@ class Register extends Component {
     } = this.state;
 
     return (
-      <div className="container">
+      <div className="container-reg">
         <div className="row">
           <div className="col-md-6 mt-5 mx-auto">
             <form noValidate onSubmit={this.onSubmit}>
-              <h1 className="h3 mb-3 font-weight-normal">Register</h1>
+              <h1 className="h3_reg mb-3 font-weight-normal">Register</h1>
 
-              <div className="form-group">
+              <div className="form-group_reg">
                 <label htmlFor="username">Username</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control-reg"
                   name="username"
                   placeholder="Enter Username"
                   value={this.state.username}
@@ -147,11 +148,11 @@ class Register extends Component {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group2_reg">
                 <label htmlFor="email">Email Address</label>
                 <input
                   type="email"
-                  className="form-control"
+                  className="form-control-reg"
                   name="email"
                   placeholder="Enter Email"
                   value={this.state.email}
@@ -159,11 +160,11 @@ class Register extends Component {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group3_reg">
                 <label htmlFor="account">Account Number</label>
                 <input
                   type="account"
-                  className="form-control"
+                  className="form-control-reg"
                   name="account"
                   placeholder="Enter Account Number"
                   value={this.state.account}
@@ -171,11 +172,11 @@ class Register extends Component {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group4_reg">
                 <label htmlFor="password">Password</label>
                 <input
                   type="password"
-                  className="form-control"
+                  className="form-control-reg"
                   name="password"
                   placeholder="Enter Password"
                   value={this.state.password}
@@ -183,7 +184,7 @@ class Register extends Component {
                 />
               </div>
 
-              <div className="form-group form-check">
+              <div className="form-group5_reg form-check">
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -201,11 +202,11 @@ class Register extends Component {
 
               {facialRecognitionEnabled && (
                 <div>
-                  <div className="form-group">
+                  <div className="form-group5_reg">
                     <label htmlFor="threshold">Threshold</label>
                     <input
                       type="number"
-                      className="form-control"
+                      className="form-control-reg"
                       name="threshold"
                       placeholder="Enter Threshold"
                       value={this.state.threshold}
@@ -218,10 +219,14 @@ class Register extends Component {
                   </div>
 
                   {!capturing ? (
-                    <button onClick={this.startCapture}>Start Camera</button>
+                    <button className="capture" onClick={this.startCapture}>
+                      Start Camera
+                    </button>
                   ) : (
                     <>
-                      <button onClick={this.stopCapture}>Take Picture</button>
+                      <button className="capture" onClick={this.stopCapture}>
+                        Take Picture
+                      </button>
                       <video ref={this.videoRef} autoPlay muted />
                     </>
                   )}
@@ -243,10 +248,7 @@ class Register extends Component {
 
               {frame && <div>Your facial data has been extracted</div>}
 
-              <button
-                type="submit"
-                className="btn btn-lg btn-primary btn-block"
-              >
+              <button type="submit" className="btn_reg ">
                 Register
               </button>
             </form>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+ import "./Transaction.css";
 
 class Transaction extends Component {
   constructor() {
@@ -71,62 +72,62 @@ class Transaction extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="container-trans">
         <div className="row">
           <div className="col-md-6 mt-5 mx-auto">
             <form noValidate onSubmit={this.onSubmit}>
-              <h1 className="h3 mb-3 font-weight-normal">
+              <h1 className="h3-trans mb-3 font-weight-normal">
                 Transaction Details
               </h1>
-              <div className="form-group">
-                <label htmlFor="username">Username</label>
+              <div className="form-group-trans">
+                <label className="label-trans" htmlFor="username">Username</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control-trans"
                   name="username"
                   placeholder="Enter Username"
                   value={this.state.username}
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="account">Account Number</label>
+              <div className="form-group-trans">
+                <label className="label-trans" htmlFor="account">Account Number</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control-trans"
                   name="account"
                   placeholder="Enter Account Number"
                   defaultValue={this.state.account}
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="receiver">Receiver</label>
+              <div className="form-group-trans">
+                <label className="label-trans" htmlFor="receiver">Receiver</label>
                 <input
                   type="text"
-                  className="form-control"
+                  className="form-control-trans"
                   name="reciever_name"
                   placeholder="Enter Receiver Username"
                   value={this.state.reciever_name}
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="receiver_accnt">Receiver Account</label>
+              <div className="form-group-trans">
+                <label className="label-trans" htmlFor="receiver_accnt">Receiver Account</label>
                 <input
                   type="number"
-                  className="form-control"
+                  className="form-control-trans"
                   name="recieveraccount_number"
                   placeholder="Enter Receiver Account"
                   value={this.state.recieveraccount_number}
                   onChange={this.onChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="amount">Amount</label>
+              <div className="form-group-trans">
+                <label className="label-trans" htmlFor="amount">Amount</label>
                 <input
                   type="number"
-                  className="form-control"
+                  className="form-control-trans"
                   name="amount"
                   placeholder="Enter Amount"
                   value={this.state.amount}
@@ -135,7 +136,7 @@ class Transaction extends Component {
               </div>
               <button
                 type="submit"
-                className="btn btn-lg btn-primary btn-block"
+                className="btn-auth btn-lg btn-primary btn-block"
               >
                 Proceed to authentication
               </button>
