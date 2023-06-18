@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 class Profile extends Component {
   constructor() {
@@ -7,6 +8,7 @@ class Profile extends Component {
     this.state = {
       username: "",
       threshold: "",
+      account: "",
     };
     this.onTransactionClick = this.onTransactionClick.bind(this);
   }
@@ -14,10 +16,25 @@ class Profile extends Component {
   componentDidMount() {
     const token = localStorage.usertoken;
     const decoded = jwt_decode(token);
-    console.log(decoded);
+    const username = decoded.sub.username;
+    const account = decoded.sub.account;
     this.setState({
       username: decoded.sub.username,
+      account: decoded.sub.account,
     });
+
+    axios
+      .post("http://localhost:5000/profiledata", { username: username })
+      .then((response) => {
+        console.log(response);
+        const { threshold } = response.data;
+        this.setState({
+          threshold: threshold,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   onTransactionClick() {
@@ -37,6 +54,16 @@ class Profile extends Component {
                 <td>Username</td>
                 <td>{this.state.username}</td>
               </tr>
+              <tr>
+                <td>Account</td>
+                <td>{this.state.account}</td>
+              </tr>
+              {this.state.threshold > 0 && (
+                <tr>
+                  <td>Threshold</td>
+                  <td>{this.state.threshold}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

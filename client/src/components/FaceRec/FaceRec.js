@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import "./FaceRec.css";
 
 class FaceRec extends Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class FaceRec extends Component {
       capturing: false,
       frames: [],
       result: "",
+      loading: false,
     };
     this.videoRef = React.createRef();
     this.captureInterval = null;
@@ -33,6 +35,7 @@ class FaceRec extends Component {
 
   sendFramesToBackend = async () => {
     try {
+      this.setState({ loading: true });
       const token = localStorage.usertoken;
       const decoded = jwt_decode(token);
       const username = decoded.sub.username;
@@ -53,10 +56,12 @@ class FaceRec extends Component {
         matches: prediction.matches,
         non_matches: prediction.non_matches,
       });
+      this.setState({ loading: false });
     } catch (error) {
       console.error(error);
       // Handle errors
     }
+    this.setState({ loading: false });
   };
 
   startCapture = () => {
@@ -97,6 +102,7 @@ class FaceRec extends Component {
       probability,
       matches,
       non_matches,
+      loading,
     } = this.state;
 
     const accuracy =
@@ -115,6 +121,18 @@ class FaceRec extends Component {
         ) : (
           <button onClick={this.stopCapture}>Stop Capture</button>
         )}
+        {loading && (
+          <div>
+            <div class="loader">
+              <div class="loader__bar"></div>
+              <div class="loader__bar"></div>
+              <div class="loader__bar"></div>
+              <div class="loader__bar"></div>
+              <div class="loader__bar"></div>
+              <div class="loader__ball"></div>
+            </div>
+          </div>
+        )}
         {result && (
           <div>
             <h2>Result</h2>
@@ -132,11 +150,12 @@ class FaceRec extends Component {
             <p>{predictionliveness}</p>
             <p>Probability: {probability}%</p>
             <br />
-
-            <a href="/success" rel="noopener noreferrer">
-              <button>Go to next page</button>
-            </a>
           </div>
+        )}
+        {accuracy > 90 && probability > 90 && predictionliveness == "Real" && (
+          <a href="/success" rel="noopener noreferrer">
+            <button>Go to next page</button>
+          </a>
         )}
       </div>
     );

@@ -9,8 +9,6 @@ import Profile from "./components/Profile/Profile";
 import Transaction from "./components/Transaction/Transaction";
 import OTPVerify from "./components/OTPVerify/OTPVerify";
 import PostPay from "./components/PostPay/PostPay";
-
-import Liveness from "./components/Liveness/Liveness";
 import FaceRec from "./components/FaceRec/FaceRec";
 
 class App extends Component {
@@ -27,7 +25,6 @@ class App extends Component {
             <Route exact path="/transaction" component={Transaction} />
             <Route exact path="/verify" component={OTPVerify} />
             <Route exact path="/success" component={PostPay} />
-            <Route exact path="/liveness" component={Liveness} />
             <Route exact path="/facerec" component={FaceRec} />
           </div>
         </div>

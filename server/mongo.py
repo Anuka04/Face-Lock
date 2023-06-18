@@ -67,6 +67,28 @@ def decrypt_data(encrypted_data):
     return decrypted_data.decode('utf-8')
 
 
+from cryptography.fernet import Fernet
+import base64
+
+# Generate a random encryption key
+# key = Fernet.generate_key()
+key = b'KpWVRdcaDe5z2lrDXttS5RVMpQUxq56uhng5vpVx39g='
+
+def encrypt_data_list(data):
+    cipher = Fernet(key)
+    encrypted_data = cipher.encrypt(str(data).encode())
+    return encrypted_data
+
+# def encrypt_data_list(data):
+#     encrypted_data = []
+#     for item in data:
+#         item_str = str(item)  # Convert float to string
+#         encrypted_item = cipher.encrypt(item_str.encode())  # Encrypt the encoded string
+#         print("iteration")
+#         encrypted_data.append(encrypted_item)
+#     print(encrypted_data)
+#     return encrypted_data
+
 def base64_to_numpy(base64_string):
     # Remove the data URL prefix
     encoded_image = base64_string.split(",")[1]
@@ -128,7 +150,8 @@ def register():
     facialRecognitionEnabled = request.get_json()['facialRecognitionEnabled']
     threshold = request.get_json()['threshold']
     created = datetime.utcnow()
-    encodings = request.get_json()['encodings']
+    # encodings = request.get_json()['encodings']
+    encodings = [encrypt_data_list(request.get_json()['encodings'])]
     locations = request.get_json()['locations']
 
     user_id = users.insert_one({
@@ -170,6 +193,20 @@ def login():
     else:
         result = jsonify({"result": "No results found"})
     return result
+
+@app.route('/profiledata', methods =['POST'])
+@cross_origin()
+def profile():
+    users = db.users
+    username = request.get_json()['username']
+    user = users.find_one({'username': username})
+    threshold = user['threshold']
+    response = {
+        'threshold': threshold,
+    }
+    print("Profile details ",response)
+    return jsonify(response)
+
      
 @app.route('/txn/transaction', methods=['POST'])
 def transaction():
@@ -206,7 +243,7 @@ def transaction():
     new_txn = txn.find_one({'_id': ObjectId(txn_id)})
 
     try:
-        if float(amount) > float(response['threshold']):
+        if float(amount) > float(response['threshold']) and float(response['threshold'])>0:
             return jsonify({'facever': 'Amount exceeds threshold. Face recognition required.'})
     except ValueError:
         return jsonify({'error': 'Invalid threshold value. Please check the configuration.'})

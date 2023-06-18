@@ -36,8 +36,15 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 CORS(app)
+from cryptography.fernet import Fernet
+import base64
 
-faces = db.faces
+# Generate a random encryption key
+key = b'KpWVRdcaDe5z2lrDXttS5RVMpQUxq56uhng5vpVx39g='
+def decrypt_data_list(encrypted_data):
+    cipher = Fernet(key)
+    decrypted_data = cipher.decrypt(encrypted_data)
+    return eval(decrypted_data.decode())
 
 # Load the face detector model
 protoPath = "../livenessmodels/face_detector/deploy.prototxt"
@@ -67,21 +74,6 @@ def base64_to_numpy(base64_string):
     return numpy_array
 
 
-# Load the image and convert it to RGB format
-def extract_and_store_faces(image_path):
-    image = face_recognition.load_image_file(image_path)
-    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-    # Detect faces in the image
-    face_locations = face_recognition.face_locations(rgb_image)
-    face_encodings = face_recognition.face_encodings(rgb_image, face_locations)
-
-    # Iterate over detected faces
-    for face_encoding, face_location in zip(face_encodings, face_locations):
-        # Store face encoding in MongoDB
-        faces.insert_one({'encoding': face_encoding.tolist(), 'location': face_location})
-
-
 # Compare faces in the webcam stream with the stored encodings
 def compare_faces(frames, username):
     users = db.users
@@ -100,7 +92,15 @@ def compare_faces(frames, username):
         user = users.find_one({"username": username})
         print(username)
         if user:
-            user_encodings = user['encodings']
+            # print(user['encodings'])
+            # user_encodings = decrypt_data_list(user['encodings'])
+            try:
+               encode = user['encodings']
+               user_encodings = decrypt_data_list(encode[0])
+    # ... rest of the code ...
+            except Exception as e:
+                print(f"Error decrypting data: {str(e)}")
+
             # print("SECOND:  ", encoding_user)
             # Iterate over detected faces
             for face_encoding, frame_face_location in zip(face_encodings, face_locations):
