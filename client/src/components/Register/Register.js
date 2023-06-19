@@ -104,18 +104,38 @@ class Register extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+    const {
+      username,
+      account,
+      password,
+      email,
+      facialRecognitionEnabled,
+      threshold,
+      encodings,
+      locations,
+    } = this.state;
 
-    const newUser = {
-      username: this.state.username,
-      account: this.state.account,
-      password: this.state.password,
-      email: this.state.email,
-      facialRecognitionEnabled: this.state.facialRecognitionEnabled,
-      threshold: this.state.threshold,
-      encodings: this.state.encodings,
-      locations: this.state.locations,
+    let newUser = {
+      username: username,
+      account: account,
+      password: password,
+      email: email,
+      facialRecognitionEnabled: facialRecognitionEnabled,
+      threshold: threshold,
     };
-
+    if (encodings && locations) {
+      newUser = {
+        ...newUser,
+        encodings: encodings,
+        locations: locations,
+      };
+    } else {
+      newUser = {
+        ...newUser,
+        encodings: null,
+        locations: null,
+      };
+    }
     register(newUser).then((res) => {
       this.props.history.push(`/login`);
     });
@@ -247,7 +267,7 @@ class Register extends Component {
               )}
 
               {frame && <div>Your facial data has been extracted</div>}
-
+              <br />
               <button type="submit" className="btn_reg ">
                 Register
               </button>
