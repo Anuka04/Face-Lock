@@ -1,0 +1,8 @@
+.navbar {
+    background-color: white;
+  }
+  
+  .navbar .nav-link {
+    color: #006fcf;
+    font-family: Helvetica Neue, Roboto, sans-serif;
+  }

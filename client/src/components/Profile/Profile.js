@@ -68,7 +68,7 @@ class Profile extends Component {
               </tr>
             </tbody>
           </table>
-        </div>
+        <br></br>
         <button
           type="button"
           className="btn-prof btn-lg btn-primary btn-block"
@@ -76,6 +76,7 @@ class Profile extends Component {
         >
           Make a Transaction
         </button>
+        </div>
       </div>
     );
   }

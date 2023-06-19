@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import "./FaceRec.css";
 
 class FaceRec extends Component {
   constructor(props) {
@@ -105,36 +106,38 @@ class FaceRec extends Component {
         : 0;
 
     return (
-      <div>
-        <h1>Face Recognition</h1>
-        <video ref={this.videoRef} autoPlay muted />
+      <div className="video-container">
+        <h1 className="h1-face">Face Recognition</h1>
+        <video className="video-feed" ref={this.videoRef} autoPlay muted />
         <br />
         <br />
         {!capturing ? (
-          <button onClick={this.startCapture}>Start Capture</button>
+          <button className="btn-face" onClick={this.startCapture}>Start Capture</button>
         ) : (
-          <button onClick={this.stopCapture}>Stop Capture</button>
+          <button className="btn-face" onClick={this.stopCapture}>Stop Capture</button>
         )}
         {result && (
-          <div>
-            <h2>Result</h2>
+          <div >
+            <h2 className="h2-face">Result</h2>
             <p>{result}</p>
           </div>
         )}
         {matches !== undefined && non_matches !== undefined && (
           <div>
-            <p>Confidence: {accuracy}%</p>
+            <p className="h3-face">Confidence:</p>
+            <p> {accuracy}%</p>
           </div>
         )}
         {predictionliveness && (
           <div>
-            <h2>Liveness</h2>
+            <h2 className="h2-face">Liveness</h2>
             <p>{predictionliveness}</p>
-            <p>Probability: {probability}%</p>
+            <p className="h3-face">Probability:</p>
+            <p> {probability}%</p>
             <br />
 
             <a href="/success" rel="noopener noreferrer">
-              <button>Go to next page</button>
+              <button className="btn-face">Go to next page</button>
             </a>
           </div>
         )}
