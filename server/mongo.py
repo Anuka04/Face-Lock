@@ -10,13 +10,15 @@ from flask_mail import Mail, Message
 import pyotp
 import os
 import base64
-
+from flask_simple_crypt import SimpleCrypt
 from flask_cors import cross_origin
 import cv2
 import face_recognition
 from PIL import Image
 import numpy as np
 import io
+from cryptography.fernet import Fernet
+import base64
 
 load_dotenv()
 
@@ -49,7 +51,6 @@ jwt = JWTManager(app)
 
 CORS(app)
 
-from flask_simple_crypt import SimpleCrypt
 
 app.config['SECRET_KEY'] = "this is my key"
 
@@ -66,9 +67,6 @@ def decrypt_data(encrypted_data):
     decrypted_data = cipher.decrypt(encrypted_data)
     return decrypted_data.decode('utf-8')
 
-
-from cryptography.fernet import Fernet
-import base64
 
 # Generate a random encryption key
 # key = Fernet.generate_key()
