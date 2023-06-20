@@ -14,25 +14,31 @@ class Register extends Component {
       facialRecognitionEnabled: false,
       threshold: 0,
       frame: null,
-      capturing: false,
-      previewFrame: null,
+      frames: [],
+      message: false,
     };
     this.videoRef = React.createRef();
-    this.canvasRef = React.createRef();
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
+  // componentDidMount() {
+  //   navigator.mediaDevices
+  //     .getUserMedia({ video: true })
+  //     .then((stream) => {
+  //       const video = this.videoRef.current;
+  //       if (video) {
+  //         video.srcObject = stream;
+  //         video.play();
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error accessing webcam:", error);
+  //     });
+  // }
 
-  startCapture = () => {
-    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-      const video = this.videoRef.current;
-      if (video) {
-        video.srcObject = stream;
-        video.play();
-      }
-    });
+  startCapture = (e) => {
+    e.preventDefault();
     const video = this.videoRef.current;
-
     if (video && !video.srcObject) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
@@ -45,37 +51,40 @@ class Register extends Component {
         });
     }
 
-    this.setState({ capturing: true, previewFrame: null });
+    this.setState({ frame: null, capturing: true });
+
+    this.captureInterval = setInterval(() => {
+      const video = this.videoRef.current;
+
+      if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataURL = canvas.toDataURL("image/jpeg");
+        this.setState((prevState) => ({
+          frames: [...prevState.frames, dataURL],
+        }));
+      }
+    }, 100); // Adjust the interval as needed
   };
 
-  stopCapture = async (e) => {
+  stopCapture = (e) => {
     e.preventDefault();
-    const video = this.videoRef.current;
-    const stream = video && video.srcObject; // Check if video is defined before accessing srcObject
-    if (stream) {
-      const tracks = stream.getTracks();
-      tracks.forEach((track) => track.stop());
-      video.srcObject = null;
-    }
+    clearInterval(this.captureInterval);
+    this.setState({ capturing: false });
 
-    const canvas = this.canvasRef.current;
-    const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const frameDataUrl = canvas.toDataURL("image/jpeg");
-
-    await this.setState({ capturing: false, frame: frameDataUrl }); // Await the state update
-
-    console.log("FRAME:", this.state.frame);
-    this.sendFrameToBackend();
+    // Send captured frames to the Flask backend for face recognition
+    this.sendFramesToBackend();
   };
-
-  sendFrameToBackend = async () => {
-    const frameToSend = this.state.frame;
-    console.log(frameToSend);
+  sendFramesToBackend = async () => {
+    const frame = this.state.frames[0];
     try {
       const response = await axios.post("http://localhost:5000/extract-faces", {
-        frame: frameToSend,
+        frame: frame,
       });
       console.log(response.data); // Log the response data
       const { encodings, locations } = response.data;
@@ -83,6 +92,9 @@ class Register extends Component {
         encodings: encodings,
         locations: locations,
       });
+      if (encodings != null) {
+        this.setState({ message: true });
+      }
     } catch (error) {
       console.error(error);
       // Handle errors
@@ -104,51 +116,34 @@ class Register extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    const {
-      username,
-      account,
-      password,
-      email,
-      facialRecognitionEnabled,
-      threshold,
-      encodings,
-      locations,
-    } = this.state;
 
-    let newUser = {
-      username: username,
-      account: account,
-      password: password,
-      email: email,
-      facialRecognitionEnabled: facialRecognitionEnabled,
-      threshold: threshold,
+    const newUser = {
+      username: this.state.username,
+      account: this.state.account,
+      password: this.state.password,
+      email: this.state.email,
+      facialRecognitionEnabled: this.state.facialRecognitionEnabled,
+      threshold: this.state.threshold,
+      encodings: this.state.encodings,
+      locations: this.state.locations,
+      message: this.state.message,
     };
-    if (encodings && locations) {
-      newUser = {
-        ...newUser,
-        encodings: encodings,
-        locations: locations,
-      };
-    } else {
-      newUser = {
-        ...newUser,
-        encodings: null,
-        locations: null,
-      };
-    }
+
     register(newUser).then((res) => {
       this.props.history.push(`/login`);
     });
+
+    const video = this.videoRef.current;
+    if (video) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      video.srcObject = null;
+    }
   }
 
   render() {
-    const {
-      capturing,
-      facialRecognitionEnabled,
-      frame,
-      previewFrame,
-    } = this.state;
-
+    const { capturing, facialRecognitionEnabled } = this.state;
     return (
       <div className="container-reg">
         <div className="row">
@@ -243,31 +238,15 @@ class Register extends Component {
                       Start Camera
                     </button>
                   ) : (
-                    <>
-                      <button className="capture" onClick={this.stopCapture}>
-                        Take Picture
-                      </button>
-                      <video ref={this.videoRef} autoPlay muted />
-                    </>
+                    <button className="capture" onClick={this.stopCapture}>
+                      Take Picture
+                    </button>
                   )}
 
-                  {previewFrame && (
-                    <div>
-                      <p>Make sure your face is clearly visible in the frame</p>
-                      <h3>Preview:</h3>
-                      <img src={previewFrame} alt="Preview" />
-                    </div>
-                  )}
-
-                  <canvas
-                    ref={this.canvasRef}
-                    style={{ display: "none" }}
-                  ></canvas>
+                  <video ref={this.videoRef} autoPlay muted />
                 </div>
               )}
-
-              {frame && <div>Your facial data has been extracted</div>}
-              <br />
+              {this.state.message && <p>You facial data has been extracted</p>}
               <button type="submit" className="btn_reg ">
                 Register
               </button>

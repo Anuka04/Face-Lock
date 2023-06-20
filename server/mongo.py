@@ -79,15 +79,6 @@ def encrypt_data_list(data):
     encrypted_data = cipher.encrypt(str(data).encode())
     return encrypted_data
 
-# def encrypt_data_list(data):
-#     encrypted_data = []
-#     for item in data:
-#         item_str = str(item)  # Convert float to string
-#         encrypted_item = cipher.encrypt(item_str.encode())  # Encrypt the encoded string
-#         print("iteration")
-#         encrypted_data.append(encrypted_item)
-#     print(encrypted_data)
-#     return encrypted_data
 
 def base64_to_numpy(base64_string):
     # Remove the data URL prefix
@@ -114,9 +105,7 @@ def send_encooding():
     # Get the frames from the request
     # frames = request.form.getlist('frames')
     frame = request.get_json()['frame']
-
-    # frame = request.json['frame']
-    # print("FRAMES ARE ",frame)
+    print("FRAMES ARE ",frame)
 
     image = base64_to_numpy(frame)
     rgb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
