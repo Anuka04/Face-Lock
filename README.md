@@ -44,7 +44,6 @@ client (Frontend):
 ```
 cd client
 npm install
-
 ```
 
 server (Backend):
@@ -52,7 +51,6 @@ server (Backend):
 ```
 cd server
 pip install -r requirements.txt
-
 ```
 
 ml-server (Machine Learning Server):
@@ -60,7 +58,6 @@ ml-server (Machine Learning Server):
 ```
 cd ml-server
 pip install -r requirements.txt
-
 ```
 
 5. Run the Application:
@@ -72,7 +69,6 @@ Terminal 1 (Server):
 ```
 cd server
 python mongo.py
-
 ```
 
 Terminal 2 (Machine Learning Server):
@@ -80,7 +76,6 @@ Terminal 2 (Machine Learning Server):
 ```
 cd ml-server
 python backend.py
-
 ```
 
 Terminal 3 (Client):
@@ -88,7 +83,6 @@ Terminal 3 (Client):
 ```
 cd client
 npm start
-
 ```
 
 This will start the application, and you will have your database running.
