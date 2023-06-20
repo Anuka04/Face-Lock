@@ -137,10 +137,16 @@ class FaceRec extends Component {
             </div>
           </div>
         )}
-        {result && (
+        {result == "Match found!" && (
           <div>
             <h2 className="h2-face">Result</h2>
             <p>{result}</p>
+          </div>
+        )}
+        {result == "No match found!" && (
+          <div>
+            <h2 className="h2-face">Result</h2>
+            <p className="error-message">{result}</p>
           </div>
         )}
         {matches !== undefined &&
@@ -162,7 +168,10 @@ class FaceRec extends Component {
         {predictionliveness && (
           <div>
             <h2 className="h2-face">Liveness</h2>
-            <p>{predictionliveness}</p>
+            {predictionliveness == "Real" && <p>{predictionliveness}</p>}
+            {predictionliveness == "Fake" && (
+              <p className="error-message">{predictionliveness}</p>
+            )}
             <p className="h3-face">Probability:</p>
             <p> {probability}%</p>
             <br />
