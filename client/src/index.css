@@ -1,0 +1,13 @@
+body {
+  background-color: #ECEDEE; 
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica Neue, Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: Helvetica Neue, Roboto, sans-serif;
+
+}
