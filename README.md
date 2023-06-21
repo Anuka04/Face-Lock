@@ -29,10 +29,17 @@ Once downloaded, extract the contents of the model folder and place it in the ma
 
 3. Set up the Database Connection:
 
-Create an .env file in the project's root directory and provide the link to your database. Example:
+Create an .env file in the server and ml-server folders. 
+Format:
 
 ```
-DB_URL=your-database-url
+DB_URL=
+MAIL_SERVER=
+EMAIL=
+DB_NAME=
+SECRET=
+SECRET_KEY=
+FERNET=
 ```
 
 4. Install Dependencies:
