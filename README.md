@@ -1,5 +1,7 @@
 # Face-Lock
 
+![banner](https://github.com/Anuka04/Face-Lock/assets/79411679/e658167c-ced8-425c-936e-a13e47ff6b53)
+
 Our project aims to create a facial recognition-based secure and user-friendly authentication method for digital transactions. Our solution moves away from conventional approaches like OTPs, which are susceptible to phishing and hacking attacks, and instead incorporates the use of facial recognition technology.
 
 ## Project Description
@@ -27,12 +29,17 @@ Once downloaded, extract the contents of the model folder and place it in the ma
 
 3. Set up the Database Connection:
 
-Create an .env file in the project's root directory and provide the link to your database. Example:
+Create an .env file in the server and ml-server folders.
+Format:
 
 ```
-
-DB_URL=your-database-url
-
+DB_URL=
+MAIL_SERVER=
+EMAIL=
+DB_NAME=
+SECRET=
+SECRET_KEY=
+FERNET=
 ```
 
 4. Install Dependencies:
@@ -88,3 +95,14 @@ npm start
 This will start the application, and you will have your database running.
 
 Feel free to explore and test the Face-Lock application with your own database configuration. Enjoy secure and user-friendly authentication for digital transactions!
+
+###### Want to know more about our project?
+
+- Figma Design: [Click here to view our prototype!](https://www.figma.com/file/9eJtMqHwr06IMbGhWJrqIt/AMEX?type=design&node-id=0%3A1&t=flD4hwNo299feTb2-1)
+- YouTube Video: [Click here to view our demo!](https://www.youtube.com/watch?v=J4oh8gtIb34)
+
+---
+
+<p align="center">
+Made with 💙
+</p>
