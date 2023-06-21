@@ -20,16 +20,23 @@ import base64
 import io
 from PIL import Image
 
+import certifi
+ca = certifi.where()
+
 load_dotenv()
 
 app = Flask(__name__)
+
 db = os.getenv("DB")
+dbname = os.getenv("DB_NAME")
+secret = os.getenv("SECRET")
 
-app.config['MONGO_DBNAME'] = 'facedata'
+#env
+app.config['MONGO_DBNAME'] = dbname
 app.config['MONGO_URI'] = db
-app.config['JWT_SECRET_KEY'] = 'secret'
+app.config['JWT_SECRET_KEY'] = secret
 
-client = MongoClient(app.config['MONGO_URI'])
+client = MongoClient(app.config['MONGO_URI'],  tlsCAFile=ca)
 db = client[app.config['MONGO_DBNAME']]
 
 bcrypt = Bcrypt(app)
@@ -39,8 +46,10 @@ CORS(app)
 from cryptography.fernet import Fernet
 import base64
 
+
 # Generate a random encryption key
-key = b'KpWVRdcaDe5z2lrDXttS5RVMpQUxq56uhng5vpVx39g='
+key = os.getenv('FERNET')
+
 def decrypt_data_list(encrypted_data):
     cipher = Fernet(key)
     decrypted_data = cipher.decrypt(encrypted_data)
