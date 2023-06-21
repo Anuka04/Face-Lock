@@ -20,30 +20,37 @@ import io
 from cryptography.fernet import Fernet
 import base64
 
+import certifi
+ca = certifi.where()
+
 load_dotenv()
 
 app = Flask(__name__)
 
 mail = Mail(app)
 
-mailpswd = os.getenv("MAILPSWD")
+mail_server = os.getenv("MAIL_SERVER")
+email_id = os.getenv("EMAIL")
 
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'projecttrial30@gmail.com'
-app.config['MAIL_PASSWORD'] = 'jihfydnmtvttitlj'  
+app.config["MAIL_USERNAME"] = email_id
+app.config['MAIL_PASSWORD'] =   mail_server
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 otp_secret = pyotp.random_base32()
 
 db = os.getenv("DB")
+dbname = os.getenv("DB_NAME")
+secret = os.getenv("SECRET")
 
-app.config['MONGO_DBNAME'] = 'facedata'
+#env
+app.config['MONGO_DBNAME'] = dbname
 app.config['MONGO_URI'] = db
-app.config['JWT_SECRET_KEY'] = 'secret'
+app.config['JWT_SECRET_KEY'] = secret
 
-client = MongoClient(app.config['MONGO_URI'])
+client = MongoClient(app.config['MONGO_URI'],  tlsCAFile=ca)
 db = client[app.config['MONGO_DBNAME']]
 
 bcrypt = Bcrypt(app)
@@ -51,8 +58,8 @@ jwt = JWTManager(app)
 
 CORS(app)
 
-
-app.config['SECRET_KEY'] = "this is my key"
+secret_key = os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = secret_key
 
 cipher = SimpleCrypt()
 cipher.init_app(app)
@@ -70,7 +77,8 @@ def decrypt_data(encrypted_data):
 
 # Generate a random encryption key
 # key = Fernet.generate_key()
-key = b'KpWVRdcaDe5z2lrDXttS5RVMpQUxq56uhng5vpVx39g='
+
+key = os.getenv('FERNET')
 
 def encrypt_data_list(data):
     cipher = Fernet(key)

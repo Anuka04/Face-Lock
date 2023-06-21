@@ -177,7 +177,7 @@ class FaceRec extends Component {
             <br />
           </div>
         )}
-        {accuracy > 90 && probability > 90 && predictionliveness == "Real" && (
+        {result == "Match found!" && predictionliveness == "Real" && (
           <a href="/success" rel="noopener noreferrer">
             <button className="btn-face">Go to next page</button>
           </a>
